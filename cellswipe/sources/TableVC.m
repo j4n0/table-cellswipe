@@ -122,11 +122,11 @@ const CGFloat kVisibleWidth = 100.0;
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)newIndexPath
 {
     [self shiftLeft:self.swipedCells];
-    [self performSelector:@selector(deselectSelectedCell) withObject:nil afterDelay:0.5f];
-}
-
-- (void) deselectSelectedCell {
-    [self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:YES];
+    // deselect
+	dispatch_time_t delay = dispatch_time(DISPATCH_TIME_NOW, 0.1*NSEC_PER_SEC);
+	dispatch_after(delay, dispatch_get_main_queue(), ^{
+        [self.tableView deselectRowAtIndexPath:[self.tableView indexPathForSelectedRow] animated:YES];
+	});
 }
 
 
@@ -149,6 +149,7 @@ const CGFloat kVisibleWidth = 100.0;
     NSString* const identifier = @"Cell";
     TableCell *cell = (TableCell*)[self.tableView dequeueReusableCellWithIdentifier:identifier forIndexPath:indexPath];
     cell.textLabel.text = [NSString stringWithFormat:@"%d",[indexPath row]];
+    if ([indexPath row]==0) cell.textLabel.text = @"Swipe right the cells.";
     return cell;
 }
 
